@@ -1,5 +1,6 @@
 package com.github.GuilhermeBauer16.EstaparTesteTecnico.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -10,19 +11,24 @@ public class GarageModel {
 
     @Id
     private String sector;
-    private String basePrice;
+    @Column(name = "base_price")
+    private Double basePrice;
+    @Column(name = "max_capacity")
     private int maxCapacity;
-    private int currentCapacity;
+
+    @Column(name = "current_occupancy")
+    private Integer currentOccupancy;
 
     public GarageModel() {
     }
 
-    public GarageModel(String sector, String basePrice, int maxCapacity, int currentCapacity) {
+    public GarageModel(String sector, Double basePrice, int maxCapacity, int currentOccupancy) {
         this.sector = sector;
         this.basePrice = basePrice;
         this.maxCapacity = maxCapacity;
-        this.currentCapacity = currentCapacity;
+        this.currentOccupancy = currentOccupancy;
     }
+
 
     public String getSector() {
         return sector;
@@ -32,11 +38,11 @@ public class GarageModel {
         this.sector = sector;
     }
 
-    public String getBasePrice() {
+    public Double getBasePrice() {
         return basePrice;
     }
 
-    public void setBasePrice(String basePrice) {
+    public void setBasePrice(Double basePrice) {
         this.basePrice = basePrice;
     }
 
@@ -48,11 +54,12 @@ public class GarageModel {
         this.maxCapacity = maxCapacity;
     }
 
-    public int getCurrentCapacity() {
-        return currentCapacity;
+
+    public Integer getCurrentOccupancy() {
+        return currentOccupancy;
     }
 
-    public void setCurrentCapacity(int currentCapacity) {
-        this.currentCapacity = currentCapacity;
+    public void setCurrentOccupancy(int currentOccupancy) {
+        this.currentOccupancy = currentOccupancy;
     }
 }
