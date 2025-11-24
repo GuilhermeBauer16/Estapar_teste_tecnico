@@ -1,23 +1,19 @@
-CREATE TABLE spots
-(
+CREATE TABLE IF NOT EXISTS spots (
 
-    id                        BIGINT PRIMARY KEY,
+    id BIGINT NOT NULL,
 
+    latitude DECIMAL(10, 8) NOT NULL,
+    longitude DECIMAL(11, 8) NOT NULL,
+    is_occupied BOOLEAN NOT NULL DEFAULT FALSE,
+    sector_fk VARCHAR(10) NOT NULL,
 
-    lat                       NUMERIC(9, 6) NOT NULL,
-    lng                       NUMERIC(9, 6) NOT NULL,
-
-
-    sector                    VARCHAR(255)  NOT NULL,
-
-
-    is_occupied               BOOLEAN       NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (`id`),
 
 
-    occupied_by_license_plate VARCHAR(10),
-
-
-    CONSTRAINT fk_spot_sector
-        FOREIGN KEY (sector)
-            REFERENCES garages (sector)
-);
+    INDEX fk_spots_garages_idx (sector_fk ASC) VISIBLE,
+    CONSTRAINT fk_spots_garages
+    FOREIGN KEY (sector_fk)
+    REFERENCES `garages` (sector)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    )

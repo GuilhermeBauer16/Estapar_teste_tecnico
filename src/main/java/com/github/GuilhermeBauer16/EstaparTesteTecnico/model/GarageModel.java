@@ -1,9 +1,8 @@
 package com.github.GuilhermeBauer16.EstaparTesteTecnico.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name= "garages")
@@ -18,6 +17,9 @@ public class GarageModel {
 
     @Column(name = "current_occupancy")
     private Integer currentOccupancy;
+
+    @OneToMany(mappedBy = "garageModel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SpotModel> spots;
 
     public GarageModel() {
     }

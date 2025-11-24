@@ -1,24 +1,78 @@
 package com.github.GuilhermeBauer16.EstaparTesteTecnico.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.time.ZonedDateTime;
+
+
 public class WebhookEventDTO {
-    private String license_plate;
-    private String entry_time;
+
+        @JsonProperty("license_plate")
+        private String licensePlate;
+
+        @JsonProperty("event_type")
+        private String eventType;
 
 
-    public String getLicense_plate() {
-        return license_plate;
+        @JsonProperty("entry_time")
+        private ZonedDateTime entryTime;
+
+
+        @JsonProperty("exit_time")
+        private ZonedDateTime exitTime;
+
+
+        private Double lat;
+        private Double lng;
+
+    public String getLicensePlate() {
+        return licensePlate;
     }
 
-    public void setLicense_plate(String license_plate) {
-        this.license_plate = license_plate;
+    public void setLicensePlate(String licensePlate) {
+        this.licensePlate = licensePlate;
     }
 
-    public String getEntry_time() {
-        return entry_time;
+    public String getEventType() {
+        return eventType;
     }
 
-    public void setEntry_time(String entry_time) {
-        this.entry_time = entry_time;
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
     }
 
-}
+    public ZonedDateTime getEntryTime() {
+        return entryTime;
+    }
+
+    public void setEntryTime(ZonedDateTime entryTime) {
+        this.entryTime = entryTime;
+    }
+
+    public ZonedDateTime getExitTime() {
+        return exitTime;
+    }
+
+    public void setExitTime(ZonedDateTime exitTime) {
+        this.exitTime = exitTime;
+    }
+
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLng() {
+        return lng;
+    }
+
+    public void setLng(Double lng) {
+        this.lng = lng;
+    }
+
+
+    }
+

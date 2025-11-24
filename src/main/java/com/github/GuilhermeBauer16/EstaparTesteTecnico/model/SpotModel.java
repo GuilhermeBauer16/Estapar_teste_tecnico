@@ -1,12 +1,6 @@
 package com.github.GuilhermeBauer16.EstaparTesteTecnico.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "spots")
@@ -16,12 +10,14 @@ public class SpotModel {
     private Long id;
     private double lat;
     private double lng;
+    @Column(name= "is_Occupied")
+    private Boolean isOccupied;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sector",
             referencedColumnName = "sector",
             nullable = false)
     private GarageModel garageModel;
-    private Boolean isOccupied;
+
     private String occupiedByLicensePlate;
 
     public SpotModel() {

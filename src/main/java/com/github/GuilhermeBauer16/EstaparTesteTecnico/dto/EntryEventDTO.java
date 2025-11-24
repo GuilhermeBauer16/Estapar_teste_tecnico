@@ -5,11 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntryEvent {
+public class EntryEventDTO {
 
     private String license_plate;
     private Instant entry_time;
-    private String eventTime;
+    private Entr eventTime;
 
     public String getLicense_plate() {
         return license_plate;
