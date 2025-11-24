@@ -9,7 +9,16 @@ public class EntryEventDTO {
 
     private String license_plate;
     private Instant entry_time;
-    private Entr eventTime;
+
+
+    public EntryEventDTO() {
+    }
+
+    public EntryEventDTO(String license_plate, Instant entry_time) {
+        this.license_plate = license_plate;
+        this.entry_time = entry_time;
+
+    }
 
     public String getLicense_plate() {
         return license_plate;
@@ -25,13 +34,5 @@ public class EntryEventDTO {
 
     public void setEntry_time(Instant entry_time) {
         this.entry_time = entry_time;
-    }
-
-    public String getEventTime() {
-        return eventTime;
-    }
-
-    public void setEventTime(String eventTime) {
-        this.eventTime = eventTime;
     }
 }

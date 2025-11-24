@@ -16,10 +16,7 @@ public class GarageModel {
     private int maxCapacity;
 
     @Column(name = "current_occupancy")
-    private Integer currentOccupancy;
-
-    @OneToMany(mappedBy = "garageModel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SpotModel> spots;
+    private Integer currentOccupancy = 0;
 
     public GarageModel() {
     }
