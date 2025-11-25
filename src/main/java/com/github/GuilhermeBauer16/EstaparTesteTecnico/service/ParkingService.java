@@ -12,8 +12,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.beans.Transient;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -65,6 +63,7 @@ public class ParkingService {
         return parkingEventRepository.save(parkingEventModel);
 
     }
+
     @Transactional
     public ParkingEventModel handleExitEvent(String licensePlate, OffsetDateTime exitTime) {
 
@@ -77,15 +76,18 @@ public class ParkingService {
             throw new IllegalStateException("Active parking record for license plate " + licensePlate + " has a null entry time. Data inconsistency.");
         }
         long totalMinutes = ChronoUnit.MINUTES.between(entryTime, exitTime);
-        long chargeableMinutes = Math.max(0, totalMinutes - 30);
+        double finalAmount = 0D;
 
-        double hours = (double) chargeableMinutes / 60.0;
-        long changeableHours = (long) Math.ceil(hours);
+        if (totalMinutes > 30) {
+            double hours = (double) totalMinutes / 60.0;
+            long changeableHours = (long) Math.ceil(hours);
 
-        Double basePrice = parkingEventModel.getGarageModel().getBasePrice();
-        Double multiplier = parkingEventModel.getDynamicPriceMultiplier();
-        double dynamicPricePerHour = basePrice * multiplier;
-        double finalAmount = changeableHours * dynamicPricePerHour;
+            Double basePrice = parkingEventModel.getGarageModel().getBasePrice();
+            Double multiplier = parkingEventModel.getDynamicPriceMultiplier();
+            double dynamicPricePerHour = basePrice * multiplier;
+            finalAmount = changeableHours * dynamicPricePerHour;
+        }
+
 
         parkingEventModel.setExitTime(exitTime);
         parkingEventModel.setFinalAmount(finalAmount);
