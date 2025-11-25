@@ -101,6 +101,8 @@ public class GarageConfigurationService {
                 parkingEvent.setSpotModel(spot);
                 parkingEvent.setGarageModel(spot.getGarageModel());
                 parkingEvent.setDynamicPriceMultiplier(1.0);
+                parkingEvent.setLat(spot.getLat());
+                parkingEvent.setLgn(spot.getLng());
 
                 parkingEventRepository.save(parkingEvent);
             });

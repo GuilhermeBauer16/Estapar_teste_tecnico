@@ -1,6 +1,7 @@
 package com.github.GuilhermeBauer16.EstaparTesteTecnico.controller;
 
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.dto.WebhookEventDTO;
+import com.github.GuilhermeBauer16.EstaparTesteTecnico.model.ParkingEventModel;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.service.ParkingEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,10 +25,10 @@ public class ParkingWebhookController {
     }
 
     @PostMapping
-    public ResponseEntity<WebhookEventDTO> handleWebhookEvent(@RequestBody WebhookEventDTO eventDTO) {
+    public ResponseEntity<ParkingEventModel> handleWebhookEvent(@RequestBody WebhookEventDTO eventDTO) {
 
 
-        WebhookEventDTO webhookEventDTO = service.parkedEvent(eventDTO);
+        ParkingEventModel webhookEventDTO = service.parkedEvent(eventDTO);
 
         return new ResponseEntity<>(webhookEventDTO, HttpStatus.OK);
     }

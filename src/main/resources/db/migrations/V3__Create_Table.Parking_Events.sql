@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS parking_events (
     exit_time TIMESTAMP NULL,
     final_amount DECIMAL(10, 2) NULL,
     applied_discount_rate DECIMAL(5, 2) NULL,
+    lat DECIMAL(10, 8) NOT NULL,
+    lnt DECIMAL(11, 8) NOT NULL,
     spot_id_fk BIGINT NOT NULL,
     sector_fk VARCHAR(10) NOT NULL,
 
