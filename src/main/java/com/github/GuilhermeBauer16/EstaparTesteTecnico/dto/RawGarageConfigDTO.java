@@ -2,7 +2,6 @@ package com.github.GuilhermeBauer16.EstaparTesteTecnico.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class RawGarageConfigDTO {
@@ -11,7 +10,7 @@ public class RawGarageConfigDTO {
     @JsonProperty("base_price")
     private Double basePrice;
     @JsonProperty("max_capacity")
-    private Integer max_capacity;
+    private Integer maxCapacity;
     @JsonProperty("current_occupancy")
     private Integer currentOccupancy;
 
@@ -27,7 +26,7 @@ public class RawGarageConfigDTO {
     public RawGarageConfigDTO(String sector, Double basePrice, Integer max_capacity, Integer currentOccupancy, LocalTime openHour, LocalTime closeHour) {
         this.sector = sector;
         this.basePrice = basePrice;
-        this.max_capacity = max_capacity;
+        this.maxCapacity = max_capacity;
         this.currentOccupancy = currentOccupancy;
         this.openHour = openHour;
         this.closeHour = closeHour;
@@ -49,12 +48,12 @@ public class RawGarageConfigDTO {
         this.basePrice = basePrice;
     }
 
-    public Integer getMax_capacity() {
-        return max_capacity;
+    public Integer getMaxCapacity() {
+        return maxCapacity;
     }
 
-    public void setMax_capacity(Integer max_capacity) {
-        this.max_capacity = max_capacity;
+    public void setMaxCapacity(Integer maxCapacity) {
+        this.maxCapacity = maxCapacity;
     }
 
     public Integer getCurrentOccupancy() {

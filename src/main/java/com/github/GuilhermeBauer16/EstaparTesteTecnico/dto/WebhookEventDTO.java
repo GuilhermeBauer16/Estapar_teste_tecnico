@@ -1,9 +1,7 @@
 package com.github.GuilhermeBauer16.EstaparTesteTecnico.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 
@@ -15,18 +13,13 @@ public class WebhookEventDTO {
     @JsonProperty("event_type")
     private String eventType;
 
-
-
     @JsonProperty("entry_time")
     private OffsetDateTime entryTime;
-
-
-
     @JsonProperty("exit_time")
     private OffsetDateTime exitTime;
 
-
     private Double lat;
+
     private Double lng;
 
     public String getLicensePlate() {

@@ -57,7 +57,7 @@ public class GarageConfigurationService {
             Map<String, SpotModel> savedSpotsMap = new HashMap<>();
 
             response.getGarage().forEach(garage -> {
-                GarageModel garageModel = new GarageModel(garage.getSector(), garage.getBasePrice(), garage.getMax_capacity()
+                GarageModel garageModel = new GarageModel(garage.getSector(), garage.getBasePrice(), garage.getMaxCapacity()
                         , garage.getCurrentOccupancy(), garage.getOpenHour(), garage.getCloseHour());
                 sectorMap.put(garage.getSector(), garageRepository.save(garageModel));
                 initialOccupancyCounts.put(garage.getSector(), 0);

@@ -1,5 +1,6 @@
 package com.github.GuilhermeBauer16.EstaparTesteTecnico.service;
 
+import com.github.GuilhermeBauer16.EstaparTesteTecnico.dto.RevenueDTO;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.GarageClosedException;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.GarageFullException;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.model.GarageModel;
@@ -17,6 +18,7 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,6 +26,7 @@ public class ParkingService {
     private static final String GARAGE_FULL_EXCEPTION_MESSAGE = "Have nothing available places to parking in this garage at the moment, please try again.";
     private static final String GARAGE_CLOSED_EXCEPTION_MESSAGE = "The garage is already closed.";
     private static final ZoneId GARAGE_ZONE = ZoneId.of("America/Sao_Paulo");
+
     private final SpotRepository spotRepository;
     private final GarageRepository garageRepository;
     private final ParkingEventRepository parkingEventRepository;
@@ -35,60 +38,6 @@ public class ParkingService {
         this.parkingEventRepository = parkingEventRepository;
     }
 
-//    @Transactional
-//    protected ParkingEventModel processNewParkingEvent(String licensePlate, OffsetDateTime entryTime) {
-//
-//
-//        boolean alreadyParked = parkingEventRepository.findByLicensePlateAndExitTimeIsNull(licensePlate).isPresent();
-//        if (alreadyParked) {
-//            throw new IllegalStateException("O veículo com a placa " + licensePlate + " já possui um registro de estacionamento ativo.");
-//        }
-//
-//
-//        Optional<SpotModel> availableSpot = spotRepository.findFirstByIsOccupied(false);
-//
-//        if (availableSpot.isEmpty()) {
-//            throw new GarageFullException(GARAGE_FULL_EXCEPTION_MESSAGE);
-//        }
-//
-//        SpotModel spotModel = availableSpot.get();
-//        GarageModel sector = spotModel.getGarageModel();
-//
-//
-//        if (sector.getCurrentOccupancy() >= sector.getMaxCapacity()) {
-//            throw new GarageFullException(GARAGE_FULL_EXCEPTION_MESSAGE);
-//        }
-//
-//
-//        LocalTime entryLocalTime = entryTime.atZoneSameInstant(GARAGE_ZONE).toLocalTime();
-//        LocalTime openHour = sector.getOpenHour();
-//        LocalTime closeHour = sector.getCloseHour();
-//
-//        if (!isGarageOpen(entryLocalTime, openHour, closeHour)) {
-//            throw new GarageFullException(GARAGE_CLOSED_EXCEPTION_MESSAGE);
-//        }
-//
-//
-//        double multiplier = PricingCalculator.calculateDynamicMultiplier(sector);
-//
-//
-//        spotModel.setOccupied(true);
-//        spotModel.setOccupiedByLicensePlate(licensePlate);
-//        spotRepository.save(spotModel);
-//
-//        sector.setCurrentOccupancy(sector.getCurrentOccupancy() + 1);
-//        garageRepository.save(sector);
-//
-//
-//        ParkingEventModel parkingEventModel = new ParkingEventModel();
-//        parkingEventModel.setLicensePlate(licensePlate);
-//        parkingEventModel.setEntryTime(entryTime);
-//        parkingEventModel.setSpotModel(spotModel);
-//        parkingEventModel.setGarageModel(sector);
-//        parkingEventModel.setDynamicPriceMultiplier(multiplier);
-//
-//        return parkingEventRepository.save(parkingEventModel);
-//    }
 
     @Transactional
     public ParkingEventModel handleEntryEvent(String licensePlate, OffsetDateTime entryTime) {
@@ -122,7 +71,7 @@ public class ParkingService {
 
         }
 
-        if(entryTime == null) {
+        if (entryTime == null) {
             OffsetDateTime.now(GARAGE_ZONE);
         }
 
@@ -220,7 +169,7 @@ public class ParkingService {
         double finalAmount = 0D;
 
         if (totalMinutes > 30) {
-            double hours = (double) totalMinutes / 60.0;
+            double hours = totalMinutes / 60.0;
             long chargeableHours = (long) Math.ceil(hours);
 
             Double basePrice = parkingEventModel.getGarageModel().getBasePrice();
@@ -258,5 +207,22 @@ public class ParkingService {
 
             return !entryTime.isBefore(openHour) || !entryTime.isAfter(closeHour);
         }
+    }
+
+    public RevenueDTO getRevenueBySectorAndDate(String sectorName, OffsetDateTime date, String currency) {
+
+
+        OffsetDateTime startOfDay = date.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        OffsetDateTime endOfDay = date.withHour(23).withMinute(59).withSecond(59).withNano(999_999_999);
+
+
+        List<ParkingEventModel> events = parkingEventRepository.findCompletedEventsBySectorAndExitDateRange(
+                sectorName, startOfDay, endOfDay);
+        double totalAmount = events.stream()
+
+                .mapToDouble(ParkingEventModel::getFinalAmount)
+                .sum();
+
+        return new RevenueDTO(currency, totalAmount, date);
     }
 }
