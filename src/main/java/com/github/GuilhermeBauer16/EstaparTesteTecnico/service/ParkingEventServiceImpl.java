@@ -20,7 +20,6 @@ public class ParkingEventServiceImpl implements ParkingEventService {
 
         switch (eventType) {
             case "PARKED":
-
                 return webhookEventDTO;
 
 
@@ -40,18 +39,5 @@ public class ParkingEventServiceImpl implements ParkingEventService {
         }
     }
 
-    private String handlerWithParkedEvent(WebhookEventDTO webhookEventDTO) {
 
-        return String.format("Parked event %s", webhookEventDTO.getEventType());
-    }
-
-    private String handlerWithExitEvent(WebhookEventDTO webhookEventDTO) {
-        return String.format("Exit event %s", webhookEventDTO.getEventType());
-    }
-
-    private String handlerWithEntryEvent(WebhookEventDTO webhookEventDTO) {
-
-        System.out.println("I arrive here!!!!");
-        return String.format("Entry event %s", webhookEventDTO.getEventType());
-    }
 }

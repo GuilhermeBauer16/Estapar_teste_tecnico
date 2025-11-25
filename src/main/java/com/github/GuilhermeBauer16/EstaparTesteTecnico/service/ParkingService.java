@@ -1,5 +1,6 @@
 package com.github.GuilhermeBauer16.EstaparTesteTecnico.service;
 
+import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.GarageClosedException;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.GarageFullException;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.model.GarageModel;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.model.ParkingEventModel;
@@ -12,13 +13,17 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Service
 public class ParkingService {
     private static final String GARAGE_FULL_EXCEPTION_MESSAGE = "Have nothing available places to parking in this garage at the moment, please try again.";
+    private static final String GARAGE_CLOSED_EXCEPTION_MESSAGE = "The garage is already closed.";
+    private static final ZoneId GARAGE_ZONE = ZoneId.of("America/Sao_Paulo");
     private final SpotRepository spotRepository;
     private final GarageRepository garageRepository;
     private final ParkingEventRepository parkingEventRepository;
@@ -34,6 +39,7 @@ public class ParkingService {
 
         Optional<SpotModel> availableSpot = spotRepository.findFirstByIsOccupied(false);
 
+
         if (availableSpot.isEmpty()) {
             throw new GarageFullException(GARAGE_FULL_EXCEPTION_MESSAGE);
         }
@@ -42,8 +48,17 @@ public class ParkingService {
         GarageModel sector = spotModel.getGarageModel();
 
         if (sector.getCurrentOccupancy() >= sector.getMaxCapacity()) {
-            throw new GarageFullException(GARAGE_FULL_EXCEPTION_MESSAGE);
+            throw new GarageClosedException(GARAGE_FULL_EXCEPTION_MESSAGE);
         }
+
+        LocalTime entryLocalTime = entryTime.atZoneSameInstant(GARAGE_ZONE).toLocalTime();
+        LocalTime openHour = sector.getOpenHour();
+        LocalTime closeHour = sector.getCloseHour();
+
+        if (!isGarageOpen(entryLocalTime, openHour, closeHour)) {
+            throw new GarageFullException(GARAGE_CLOSED_EXCEPTION_MESSAGE);
+        }
+
 
         double multiplier = PricingCalculator.calculateDynamicMultiplier(sector);
 
@@ -105,5 +120,17 @@ public class ParkingService {
         return parkingEventModel;
 
 
+    }
+
+    private boolean isGarageOpen(LocalTime entryTime, LocalTime openHour, LocalTime closeHour) {
+
+        if (openHour.isBefore(closeHour) || openHour.equals(closeHour)) {
+
+            return !entryTime.isBefore(openHour) && !entryTime.isAfter(closeHour);
+
+        } else {
+
+            return !entryTime.isBefore(openHour) || !entryTime.isAfter(closeHour);
+        }
     }
 }

@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS parking_events (
 
     id BIGINT NOT NULL AUTO_INCREMENT,
-    license_plate VARCHAR(10) NOT NULL,
+    license_plate VARCHAR(10) NOT NULL UNIQUE ,
     entry_time TIMESTAMP NOT NULL,
     exit_time TIMESTAMP NULL,
     final_amount DECIMAL(10, 2) NULL,

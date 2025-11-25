@@ -2,6 +2,7 @@ package com.github.GuilhermeBauer16.EstaparTesteTecnico.handler;
 
 
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.ExceptionResponse;
+import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.GarageClosedException;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.GarageFullException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class CustomizedResponseEntityExceptionHandler {
     @ExceptionHandler({
             GarageFullException.class
     })
-    public final ResponseEntity<ExceptionResponse> handlerNotFoundException(
+    public final ResponseEntity<ExceptionResponse> handlerConflictException(
             Exception ex,
             WebRequest webRequest
     ) {
@@ -29,6 +30,22 @@ public class CustomizedResponseEntityExceptionHandler {
                 new Date()
         );
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+
+    }
+
+    @ExceptionHandler({
+            GarageClosedException.class
+    })
+    public final ResponseEntity<ExceptionResponse> handlerBadRequestException(
+            Exception ex,
+            WebRequest webRequest
+    ) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                ex.getMessage(),
+                webRequest.getDescription(false),
+                new Date()
+        );
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 
     }
 

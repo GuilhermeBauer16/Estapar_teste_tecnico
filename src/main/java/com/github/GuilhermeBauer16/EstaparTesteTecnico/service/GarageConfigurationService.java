@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
@@ -37,6 +36,11 @@ public class GarageConfigurationService {
 
     @Transactional
     public void fetchAndPersistGarageConfiguration() {
+
+        if (garageRepository.count() > 0) {
+            System.out.println("The initial configuration has been fetched.");
+            return;
+        }
         System.out.println("Buscando configuração inicial da garagem simulador");
 
         try {
@@ -53,7 +57,8 @@ public class GarageConfigurationService {
             Map<String, SpotModel> savedSpotsMap = new HashMap<>();
 
             response.getGarage().forEach(garage -> {
-                GarageModel garageModel = new GarageModel(garage.getSector(), garage.getBasePrice(), garage.getMax_capacity(), 0);
+                GarageModel garageModel = new GarageModel(garage.getSector(), garage.getBasePrice(), garage.getMax_capacity()
+                        , garage.getCurrentOccupancy(), garage.getOpenHour(), garage.getCloseHour());
                 sectorMap.put(garage.getSector(), garageRepository.save(garageModel));
                 initialOccupancyCounts.put(garage.getSector(), 0);
             });
