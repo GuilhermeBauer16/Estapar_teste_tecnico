@@ -16,14 +16,21 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Service
 public class EventTypeService {
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final String INVALID_ENTRY_DAY_MESSAGE = "The entry date (%s) must be the current date (%s) for license plate %s.";
     private static final String GARAGE_FULL_EXCEPTION_MESSAGE = "Have nothing available places to parking in this garage at the moment, please try again.";
     private static final String VEHICLE_ALREADY_PARKED_EXCEPTION_MESSAGE = "The vehicle with license plate %s already has an active parking record.";
     private static final String GARAGE_CLOSED_EXCEPTION_MESSAGE = "This garage is already closed.";
+    private static final String INVALID_EXIT_TIME_EXCEPTION_MESSAGE = "Invalid exit time for license plate %s: %s.";
+    private static final String REASON_EXIT_TIME_NULL = "cannot be null";
+    private static final String REASON_EXIT_TIME_BEFORE_ENTRY = "cannot be before the entry time (%s)";
     private static final ZoneId GARAGE_ZONE = ZoneId.of("America/Sao_Paulo");
     private static final String ACTIVE_PARKING_NOT_FOUND_EXCEPTION_MESSAGE = "No active parking event found for license plate: %s. A vehicle must register entry before updating the parked location.";
 
@@ -31,14 +38,19 @@ public class EventTypeService {
     private final GarageService garageService;
     private final SpotService spotService;
     private final ParkingEventService parkingEventService;
+    private final EventValidationService eventValidationService;
 
     @Autowired
-    public EventTypeService(ParkingEventRepository parkingEventRepository, GarageService garageService, SpotService spotService, ParkingEventService parkingEventService) {
+    public EventTypeService(ParkingEventRepository parkingEventRepository, GarageService garageService,
+                            SpotService spotService, ParkingEventService parkingEventService
+            , EventValidationService eventValidationService) {
 
         this.parkingEventRepository = parkingEventRepository;
         this.garageService = garageService;
         this.spotService = spotService;
         this.parkingEventService = parkingEventService;
+        this.eventValidationService = eventValidationService;
+
     }
 
 
@@ -65,9 +77,28 @@ public class EventTypeService {
         }
 
         if (entryTime == null) {
-            OffsetDateTime.now(GARAGE_ZONE);
+            entryTime = OffsetDateTime.now(GARAGE_ZONE);
         }
 
+        eventValidationService.validateEntryDay(entryTime, licensePlate);
+
+
+//        LocalDate today = OffsetDateTime.now(GARAGE_ZONE).toLocalDate();
+//
+//
+//        LocalDate entryDate = entryTime.toLocalDate();
+//
+//        if (!entryDate.isEqual(today)) {
+//
+//            String formattedEntryDate = entryDate.format(DATE_FORMATTER);
+//            String formattedToday = today.format(DATE_FORMATTER);
+//            throw new InvalidEntryDayException(
+//                    String.format(INVALID_ENTRY_DAY_MESSAGE,
+//                            formattedEntryDate,
+//                            formattedToday,
+//                            licensePlate)
+//            );
+//        }
 
         LocalTime entryLocalTime = entryTime.atZoneSameInstant(GARAGE_ZONE).toLocalTime();
 
@@ -99,13 +130,9 @@ public class EventTypeService {
         ParkingEventModel parkingEventModel = new ParkingEventModel();
 
         parkingEventModel.setLicensePlate(licensePlate);
-
         parkingEventModel.setEntryTime(entryTime);
-
         parkingEventModel.setSpotModel(updatedSpot);
-
         parkingEventModel.setGarageModel(updatedGarageModel);
-
         parkingEventModel.setDynamicPriceMultiplier(multiplier);
 
 
@@ -143,9 +170,21 @@ public class EventTypeService {
         ParkingEventModel parkingEventModel = parkingEventService.findParkingEventByLicensePlate(licensePlate);
 
         OffsetDateTime entryTime = parkingEventModel.getEntryTime();
-        if (entryTime == null) {
-            throw new IllegalStateException("Active parking record for license plate " + licensePlate + " has a null Exit time. Data inconsistency.");
-        }
+
+        eventValidationService.validateExitTime(entryTime, exitTime, licensePlate);
+
+//        if (exitTime == null || exitTime.isBefore(entryTime)) {
+//
+//            ZonedDateTime zonedDateTime = entryTime.atZoneSameInstant(GARAGE_ZONE);
+//            String formattedEntryTime = zonedDateTime.format(DATE_TIME_FORMATTER);
+//            String reason = exitTime == null ? REASON_EXIT_TIME_NULL :
+//                    String.format(REASON_EXIT_TIME_BEFORE_ENTRY, formattedEntryTime);
+//
+//            throw new InvalidExitTimeException(
+//                    String.format(INVALID_EXIT_TIME_EXCEPTION_MESSAGE, licensePlate, reason)
+//            );
+//        }
+
 
         long totalMinutes = ChronoUnit.MINUTES.between(entryTime, exitTime);
         double finalAmount = 0D;
