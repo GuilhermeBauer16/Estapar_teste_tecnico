@@ -7,6 +7,7 @@ import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.GarageClosedExc
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.GarageFullException;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.GarageNotFoundException;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.InvalidEntryDayException;
+import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.InvalidEventTypeException;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.InvalidExitTimeException;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.InvalidSimulatorException;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.ParkingEventNotFoundException;
@@ -46,6 +47,7 @@ public class CustomizedResponseEntityExceptionHandler {
             VehicleAlreadyParkedException.class,
             InvalidExitTimeException.class,
             InvalidEntryDayException.class,
+            InvalidEventTypeException.class
     })
     public final ResponseEntity<ExceptionResponse> handlerBadRequestException(
             Exception ex,

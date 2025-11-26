@@ -1,8 +1,8 @@
 package com.github.GuilhermeBauer16.EstaparTesteTecnico.controller;
 
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.dto.RevenueDTO;
-import com.github.GuilhermeBauer16.EstaparTesteTecnico.service.EventTypeService;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.service.RevenueService;
+import com.github.GuilhermeBauer16.EstaparTesteTecnico.service.contract.RevenueServiceContract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,42 +11,43 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeParseException;
 
 @RestController
 @RequestMapping("/revenue")
-public class RevenueController {
+public class RevenueController implements RevenueServiceContract {
 
     private final RevenueService revenueService;
 
-    private final EventTypeService parkingService;
 
     @Autowired
-    public RevenueController(RevenueService revenueService, EventTypeService parkingService) {
+    public RevenueController(RevenueService revenueService) {
         this.revenueService = revenueService;
-        this.parkingService = parkingService;
+
+    }
+
+    @Override
+    public RevenueDTO getRevenueBySectorAndDate(String sectorName, OffsetDateTime date, String currency) {
+        return null;
     }
 
     @GetMapping
+
     public ResponseEntity<RevenueDTO> getRevenueBySectorAndDate(
             @RequestParam("sector") String sectorName,
             @RequestParam("date") String dateString,
             @RequestParam(value = "currency", required = false, defaultValue = "BRL") String currency) {
 
-        try {
 
-            OffsetDateTime date = OffsetDateTime.parse(dateString + "T00:00:00Z");
-
-
-            RevenueDTO revenueDTO = revenueService.getRevenueBySectorAndDate(sectorName, date, currency);
+        OffsetDateTime date = OffsetDateTime.parse(dateString + "T00:00:00Z");
 
 
-            return ResponseEntity.ok(revenueDTO);
+        RevenueDTO revenueDTO = revenueService.getRevenueBySectorAndDate(sectorName, date, currency);
 
-        } catch (DateTimeParseException e) {
 
-            throw new IllegalArgumentException("Formato de data inválido. Use o formato YYYY-MM-DD. Exemplo: 2025-01-01.");
-        }
+        return ResponseEntity.ok(revenueDTO);
+
+
     }
+
 
 }

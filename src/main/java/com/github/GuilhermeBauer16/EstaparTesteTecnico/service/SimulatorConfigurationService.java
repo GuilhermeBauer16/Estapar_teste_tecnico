@@ -21,6 +21,9 @@ import java.util.Map;
 public class SimulatorConfigurationService implements SimulatorConfigurationServiceContract {
 
     private static final String SIMULATOR_BASE_URL = "http://localhost:3000";
+    private static final String INITIAL_PLATE_PATTERN = "INIT_PLACA_SIM_";
+    private static final String INVALID_SIMULATOR_RESPONSE = "The simulator response was invalid or null!!";
+    private static final String ERROR_FETCH_SIMULATOR_MESSAGE = "ERROR fetching simulator configuration. Check if Docker is running.";
     private static final String GARAGE_URL = "/garage";
     private final RestTemplate restTemplate;
     private final GarageRepository garageRepository;
@@ -52,8 +55,7 @@ public class SimulatorConfigurationService implements SimulatorConfigurationServ
 
             if (response == null || response.getGarage() == null) {
 
-                System.out.println("The simulator response was invalid or null!!");
-                return;
+                throw new InvalidSimulatorException(INVALID_SIMULATOR_RESPONSE);
             }
 
             Map<String, GarageModel> sectorMap = new HashMap<>();
@@ -71,15 +73,10 @@ public class SimulatorConfigurationService implements SimulatorConfigurationServ
             response.getSpots().forEach(spot -> {
                 GarageModel sector = sectorMap.get(spot.getSector());
                 if (sector != null) {
-                    String licensePlate = spot.isOccupied() ? "INIT_PLACA_SIM_" + spot.getId() : null;
+                    String licensePlate = spot.isOccupied() ? INITIAL_PLATE_PATTERN + spot.getId() : null;
                     SpotModel spotModel = new SpotModel(spot.getId(), spot.getLat(),
                             spot.getLng(), sector, spot.isOccupied(), licensePlate);
-//                    spotModel.setId(spot.getId());
-//                    spotModel.setLat(spot.getLat());
-//                    spotModel.setLng(spot.getLng());
-//                    spotModel.setGarageModel(sector);
-//                    spotModel.setOccupied(spot.isOccupied());
-//                    spotModel.setOccupiedByLicensePlate(licensePlate);
+
                     SpotModel savedSpot = spotService.saveSpot(spotModel);
 
                     if (spot.isOccupied()) {
@@ -116,8 +113,8 @@ public class SimulatorConfigurationService implements SimulatorConfigurationServ
 
         } catch (Exception e) {
 
-            e.printStackTrace();
-            throw new InvalidSimulatorException("ERRO ao buscar configuração do simulador. Verifique se o Docker está rodando.");
+
+            throw new InvalidSimulatorException(ERROR_FETCH_SIMULATOR_MESSAGE);
 
 
         }

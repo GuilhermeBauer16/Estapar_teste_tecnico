@@ -3,6 +3,7 @@ package com.github.GuilhermeBauer16.EstaparTesteTecnico.service;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.constants.ValidationConstants;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.InvalidEntryDayException;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.InvalidExitTimeException;
+import com.github.GuilhermeBauer16.EstaparTesteTecnico.service.contract.EventTypeValidationServiceContract;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.utils.DateTimeUtils;
 import org.springframework.stereotype.Service;
 
@@ -10,8 +11,9 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 @Service
-public class EventValidationService {
+public class EventTypeValidationService implements EventTypeValidationServiceContract {
 
+    @Override
     public void validateEntryDay(OffsetDateTime entryTime, String licensePlate) {
 
         LocalDate today = OffsetDateTime.now(DateTimeUtils.GARAGE_ZONE).toLocalDate();
@@ -31,7 +33,7 @@ public class EventValidationService {
     }
 
 
-
+    @Override
     public void validateExitTime(OffsetDateTime entryTime, OffsetDateTime exitTime, String licensePlate) {
         if (exitTime == null || exitTime.isBefore(entryTime)) {
 
