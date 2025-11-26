@@ -7,17 +7,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataInitializer implements CommandLineRunner {
 
-    private final GarageConfigurationService garageConfigurationService;
+    private final SimulatorConfigurationService garageConfigurationService;
 
 
     @Autowired
-    public DataInitializer(GarageConfigurationService garageConfigurationService) {
+    public DataInitializer(SimulatorConfigurationService garageConfigurationService) {
         this.garageConfigurationService = garageConfigurationService;
 
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         garageConfigurationService.fetchAndPersistGarageConfiguration();
     }
 

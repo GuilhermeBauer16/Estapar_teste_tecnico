@@ -7,6 +7,8 @@ import java.time.OffsetDateTime;
 
 public class WebhookEventDTO {
 
+    private String sector;
+
     @JsonProperty("license_plate")
     private String licensePlate;
 
@@ -70,6 +72,12 @@ public class WebhookEventDTO {
         this.lng = lng;
     }
 
+    public String getSector() {
+        return sector;
+    }
 
+    public void setSector(String sector) {
+        this.sector = sector;
+    }
 }
 

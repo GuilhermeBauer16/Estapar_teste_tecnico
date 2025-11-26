@@ -1,7 +1,8 @@
 package com.github.GuilhermeBauer16.EstaparTesteTecnico.controller;
 
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.dto.RevenueDTO;
-import com.github.GuilhermeBauer16.EstaparTesteTecnico.service.ParkingService;
+import com.github.GuilhermeBauer16.EstaparTesteTecnico.service.EventTypeService;
+import com.github.GuilhermeBauer16.EstaparTesteTecnico.service.RevenueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,10 +17,13 @@ import java.time.format.DateTimeParseException;
 @RequestMapping("/revenue")
 public class RevenueController {
 
-    private final ParkingService parkingService;
+    private final RevenueService revenueService;
+
+    private final EventTypeService parkingService;
 
     @Autowired
-    public RevenueController(ParkingService parkingService) {
+    public RevenueController(RevenueService revenueService, EventTypeService parkingService) {
+        this.revenueService = revenueService;
         this.parkingService = parkingService;
     }
 
@@ -34,7 +38,7 @@ public class RevenueController {
             OffsetDateTime date = OffsetDateTime.parse(dateString + "T00:00:00Z");
 
 
-            RevenueDTO revenueDTO = parkingService.getRevenueBySectorAndDate(sectorName, date, currency);
+            RevenueDTO revenueDTO = revenueService.getRevenueBySectorAndDate(sectorName, date, currency);
 
 
             return ResponseEntity.ok(revenueDTO);

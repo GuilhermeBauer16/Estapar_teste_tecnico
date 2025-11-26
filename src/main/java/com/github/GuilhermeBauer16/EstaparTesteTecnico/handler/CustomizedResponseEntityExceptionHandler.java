@@ -1,9 +1,14 @@
 package com.github.GuilhermeBauer16.EstaparTesteTecnico.handler;
 
 
+import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.ActiveParkingNotFoundException;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.ExceptionResponse;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.GarageClosedException;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.GarageFullException;
+import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.GarageNotFoundException;
+import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.InvalidSimulatorException;
+import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.ParkingEventNotFoundException;
+import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.VehicleAlreadyParkedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -34,7 +39,9 @@ public class CustomizedResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
-            GarageClosedException.class
+            GarageClosedException.class,
+            InvalidSimulatorException.class,
+            VehicleAlreadyParkedException.class
     })
     public final ResponseEntity<ExceptionResponse> handlerBadRequestException(
             Exception ex,
@@ -46,6 +53,24 @@ public class CustomizedResponseEntityExceptionHandler {
                 new Date()
         );
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+
+    }
+
+    @ExceptionHandler({
+            ActiveParkingNotFoundException.class,
+            GarageNotFoundException.class,
+            ParkingEventNotFoundException.class
+    })
+    public final ResponseEntity<ExceptionResponse> handlerNotFoundException(
+            Exception ex,
+            WebRequest webRequest
+    ) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                ex.getMessage(),
+                webRequest.getDescription(false),
+                new Date()
+        );
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
 
     }
 

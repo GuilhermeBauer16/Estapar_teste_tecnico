@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface SpotRepository extends JpaRepository<SpotModel, Long> {
 
-    Optional<SpotModel> findFirstByIsOccupied(boolean isOccupied);
+    Optional<SpotModel> findFirstByGarageModel_SectorAndIsOccupied(String sector, boolean isOccupied);
 
     Optional<SpotModel> findByOccupiedByLicensePlate(String licensePlate);
 }
