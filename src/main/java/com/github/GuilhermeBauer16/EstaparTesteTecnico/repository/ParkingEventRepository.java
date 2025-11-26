@@ -15,6 +15,8 @@ public interface ParkingEventRepository extends JpaRepository<ParkingEventModel,
             "WHERE p.licensePlate = :licensePlate AND p.exitTime IS NULL")
     Optional<ParkingEventModel> findByLicensePlateAndExitTimeIsNull(@Param("licensePlate")String licensePlate);
 
+    Optional<ParkingEventModel> findByLicensePlate(String licensePlate);
+
     @Query("SELECT pem FROM ParkingEventModel pem JOIN pem.garageModel gm " +
             "WHERE gm.sector = :sectorName " +
             "AND pem.exitTime IS NOT NULL " +
