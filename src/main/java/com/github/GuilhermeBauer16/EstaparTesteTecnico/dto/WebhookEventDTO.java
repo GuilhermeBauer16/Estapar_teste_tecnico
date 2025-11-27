@@ -24,6 +24,19 @@ public class WebhookEventDTO {
 
     private Double lng;
 
+    public WebhookEventDTO() {
+    }
+
+    public WebhookEventDTO(String sector, String licensePlate, String eventType, OffsetDateTime entryTime, OffsetDateTime exitTime, Double lat, Double lng) {
+        this.sector = sector;
+        this.licensePlate = licensePlate;
+        this.eventType = eventType;
+        this.entryTime = entryTime;
+        this.exitTime = exitTime;
+        this.lat = lat;
+        this.lng = lng;
+    }
+
     public String getLicensePlate() {
         return licensePlate;
     }
