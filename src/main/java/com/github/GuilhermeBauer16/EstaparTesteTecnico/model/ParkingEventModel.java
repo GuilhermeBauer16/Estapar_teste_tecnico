@@ -1,6 +1,5 @@
 package com.github.GuilhermeBauer16.EstaparTesteTecnico.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,7 +14,7 @@ import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "parking_events")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
 public class ParkingEventModel {
 
     @Id

@@ -4,14 +4,12 @@ import com.github.GuilhermeBauer16.EstaparTesteTecnico.dto.WebhookEventDTO;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.exception.InvalidEventTypeException;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.service.EventTypeService;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.service.ParkingEventServiceImpl;
+import constants.TestConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,26 +29,10 @@ class ParkingEventServiceImplTest {
     private ParkingEventServiceImpl parkingEventService;
 
 
-    private final String LICENSE_PLATE = "ABC1234";
-    private final String SECTOR = "A1";
-    private final OffsetDateTime ENTRY_TIME = OffsetDateTime.now(ZoneOffset.ofHours(-3));
-    private final Double LAT = -23.5505;
-    private final Double LNG = -46.6333;
-    private final OffsetDateTime EXIT_TIME = ENTRY_TIME.plusHours(2);
-
-
     private WebhookEventDTO createBaseDTO(String eventType) {
 
-        WebhookEventDTO dto = new WebhookEventDTO();
-
-
-        dto.setEventType(eventType);
-        dto.setSector(SECTOR);
-        dto.setLicensePlate(LICENSE_PLATE);
-        dto.setEntryTime(ENTRY_TIME);
-        dto.setLat(LAT);
-        dto.setLng(LNG);
-        dto.setExitTime(EXIT_TIME);
+        WebhookEventDTO dto = new WebhookEventDTO(TestConstants.SECTOR, TestConstants.LICENSE_PLATE,
+                eventType, TestConstants.ENTRY_TIME, TestConstants.EXIT_TIME, TestConstants.LAT, TestConstants.LNG);
 
         return dto;
     }
@@ -69,9 +51,9 @@ class ParkingEventServiceImplTest {
         assertEquals(ParkingEventServiceImpl.EVENT_TYPE_REQUIRED, exception.getMessage());
 
 
-        verify(eventTypeService, never()).handleEntryEvent(SECTOR, LICENSE_PLATE, ENTRY_TIME);
-        verify(eventTypeService, never()).handleParkedEvent(LICENSE_PLATE, LAT, LNG);
-        verify(eventTypeService, never()).handleExitEvent(LICENSE_PLATE, EXIT_TIME);
+        verify(eventTypeService, never()).handleEntryEvent(TestConstants.SECTOR, TestConstants.LICENSE_PLATE, TestConstants.ENTRY_TIME);
+        verify(eventTypeService, never()).handleParkedEvent(TestConstants.LICENSE_PLATE, TestConstants.LAT, TestConstants.LNG);
+        verify(eventTypeService, never()).handleExitEvent(TestConstants.LICENSE_PLATE, TestConstants.EXIT_TIME);
     }
 
     @Test
@@ -112,49 +94,49 @@ class ParkingEventServiceImplTest {
     @Test
     void parkedEvent_Success_EntryEvent() {
 
-        WebhookEventDTO dto = createBaseDTO("ENTRY");
+        WebhookEventDTO dto = createBaseDTO(TestConstants.EVENT_TYPE_ENTRY);
 
 
         parkingEventService.parkedEvent(dto);
 
 
-        verify(eventTypeService).handleEntryEvent(SECTOR, LICENSE_PLATE, ENTRY_TIME);
+        verify(eventTypeService).handleEntryEvent(TestConstants.SECTOR, TestConstants.LICENSE_PLATE, TestConstants.ENTRY_TIME);
 
 
-        verify(eventTypeService, never()).handleParkedEvent(LICENSE_PLATE, LAT, LNG);
-        verify(eventTypeService, never()).handleExitEvent(LICENSE_PLATE, EXIT_TIME);
+        verify(eventTypeService, never()).handleParkedEvent(TestConstants.LICENSE_PLATE, TestConstants.LAT, TestConstants.LNG);
+        verify(eventTypeService, never()).handleExitEvent(TestConstants.LICENSE_PLATE, TestConstants.EXIT_TIME);
     }
 
     @Test
     void parkedEvent_Success_ParkedEvent() {
 
-        WebhookEventDTO dto = createBaseDTO("PARKED");
+        WebhookEventDTO dto = createBaseDTO(TestConstants.EVENT_TYPE_PARKED);
 
 
         parkingEventService.parkedEvent(dto);
 
 
-        verify(eventTypeService).handleParkedEvent(LICENSE_PLATE, LAT, LNG);
+        verify(eventTypeService).handleParkedEvent(TestConstants.LICENSE_PLATE, TestConstants.LAT, TestConstants.LNG);
 
 
-        verify(eventTypeService, never()).handleEntryEvent(SECTOR, LICENSE_PLATE, ENTRY_TIME);
-        verify(eventTypeService, never()).handleExitEvent(LICENSE_PLATE, EXIT_TIME);
+        verify(eventTypeService, never()).handleEntryEvent(TestConstants.SECTOR, TestConstants.LICENSE_PLATE, TestConstants.ENTRY_TIME);
+        verify(eventTypeService, never()).handleExitEvent(TestConstants.LICENSE_PLATE, TestConstants.EXIT_TIME);
     }
 
     @Test
     void parkedEvent_Success_ExitEvent() {
 
-        WebhookEventDTO dto = createBaseDTO("EXIT");
+        WebhookEventDTO dto = createBaseDTO(TestConstants.EVENT_TYPE_EXIT);
 
 
         parkingEventService.parkedEvent(dto);
 
 
-        verify(eventTypeService).handleExitEvent(LICENSE_PLATE, EXIT_TIME);
+        verify(eventTypeService).handleExitEvent(TestConstants.LICENSE_PLATE, TestConstants.EXIT_TIME);
 
 
-        verify(eventTypeService, never()).handleEntryEvent(SECTOR, LICENSE_PLATE, ENTRY_TIME);
-        verify(eventTypeService, never()).handleParkedEvent(LICENSE_PLATE, LAT, LNG);
+        verify(eventTypeService, never()).handleEntryEvent(TestConstants.SECTOR, TestConstants.LICENSE_PLATE, TestConstants.ENTRY_TIME);
+        verify(eventTypeService, never()).handleParkedEvent(TestConstants.LICENSE_PLATE, TestConstants.LAT, TestConstants.LNG);
     }
 
     @Test
@@ -166,7 +148,7 @@ class ParkingEventServiceImplTest {
         parkingEventService.parkedEvent(dto);
 
 
-        verify(eventTypeService).handleEntryEvent(SECTOR, LICENSE_PLATE, ENTRY_TIME);
-        verify(eventTypeService, never()).handleParkedEvent(LICENSE_PLATE, LAT, LNG);
+        verify(eventTypeService).handleEntryEvent(TestConstants.SECTOR, TestConstants.LICENSE_PLATE, TestConstants.ENTRY_TIME);
+        verify(eventTypeService, never()).handleParkedEvent(TestConstants.LICENSE_PLATE, TestConstants.LAT, TestConstants.LNG);
     }
 }

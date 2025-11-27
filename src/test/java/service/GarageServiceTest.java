@@ -3,6 +3,7 @@ package service;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.model.GarageModel;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.repository.GarageRepository;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.service.GarageService;
+import constants.TestConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,12 +26,6 @@ import static org.mockito.Mockito.when;
 class GarageServiceTest {
 
     private GarageModel garage;
-    private final String SECTOR = "A1";
-    private final Double BASE_PRICE = 10.0;
-    private final int MAX_CAPACITY = 100;
-    private final Integer CURRENT_OCCUPANCY = 50;
-    private final LocalTime OPEN_HOUR = LocalTime.of(8, 0);
-    private final LocalTime CLOSE_HOUR = LocalTime.of(20, 0);
 
     @Mock
     private GarageRepository garageRepository;
@@ -40,7 +35,8 @@ class GarageServiceTest {
 
     @BeforeEach
     void setup() {
-        garage = new GarageModel(SECTOR, BASE_PRICE, MAX_CAPACITY, CURRENT_OCCUPANCY, OPEN_HOUR, CLOSE_HOUR);
+        garage = new GarageModel(TestConstants.SECTOR, TestConstants.BASE_PRICE, TestConstants.MAX_CAPACITY,
+                TestConstants.CURRENT_OCCUPANCY, TestConstants.OPEN_HOUR, TestConstants.CLOSE_HOUR);
     }
 
 
@@ -53,12 +49,12 @@ class GarageServiceTest {
 
         assertNotNull(result);
         assertNotNull(garage.getSector());
-        assertEquals(SECTOR, garage.getSector());
-        assertEquals(BASE_PRICE, garage.getBasePrice());
-        assertEquals(CURRENT_OCCUPANCY, garage.getCurrentOccupancy());
-        assertEquals(MAX_CAPACITY, garage.getMaxCapacity());
-        assertEquals(OPEN_HOUR, garage.getOpenHour());
-        assertEquals(CLOSE_HOUR, garage.getCloseHour());
+        assertEquals(TestConstants.SECTOR, garage.getSector());
+        assertEquals(TestConstants.BASE_PRICE, garage.getBasePrice());
+        assertEquals(TestConstants.CURRENT_OCCUPANCY, garage.getCurrentOccupancy());
+        assertEquals(TestConstants.MAX_CAPACITY, garage.getMaxCapacity());
+        assertEquals(TestConstants.OPEN_HOUR, garage.getOpenHour());
+        assertEquals(TestConstants.CLOSE_HOUR, garage.getCloseHour());
 
 
         verify(garageRepository, times(1)).save(any(GarageModel.class));

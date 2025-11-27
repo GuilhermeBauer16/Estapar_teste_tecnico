@@ -6,6 +6,7 @@ import com.github.GuilhermeBauer16.EstaparTesteTecnico.model.ParkingEventModel;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.model.SpotModel;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.repository.ParkingEventRepository;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.service.ParkingEventService;
+import constants.TestConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,38 +45,25 @@ class ParkingEventServiceTest {
     private SpotModel spot;
     private GarageModel mockGarage;
 
-    private final Double DYNAMIC_PRICE_MULTIPLIER = 1.0;
-    private final OffsetDateTime ENTRY_TIME = OffsetDateTime.now().minusHours(1);
-    private final Long ID = 1L;
-    private final double LAT = -23.5505;
-    private final double LNG = -46.6333;
-    private final Boolean IS_OCCUPIED = false;
-    private final String LICENSE_PLATE = "ABC-1234";
-
-    private final String SECTOR = "A1";
-    private final Double BASE_PRICE = 10.0;
-    private final int MAX_CAPACITY = 100;
-    private final Integer CURRENT_OCCUPANCY = 50;
-    private final LocalTime OPEN_HOUR = LocalTime.of(8, 0);
-    private final LocalTime CLOSE_HOUR = LocalTime.of(20, 0);
-
-
     @BeforeEach
     void setUp() {
 
-        mockGarage = new GarageModel(SECTOR, BASE_PRICE, MAX_CAPACITY, CURRENT_OCCUPANCY, OPEN_HOUR, CLOSE_HOUR);
-        spot = new SpotModel(ID, LAT, LNG, mockGarage, IS_OCCUPIED, LICENSE_PLATE);
+        mockGarage = new GarageModel(TestConstants.SECTOR, TestConstants.BASE_PRICE, TestConstants.MAX_CAPACITY, TestConstants.CURRENT_OCCUPANCY,
+                TestConstants.OPEN_HOUR, TestConstants.CLOSE_HOUR);
+
+        spot = new SpotModel(TestConstants.ID, TestConstants.LAT, TestConstants.LNG, mockGarage,
+                TestConstants.IS_OCCUPIED_FALSE, TestConstants.LICENSE_PLATE);
 
 
         activeParkingEvent = new ParkingEventModel(
-                ID,
-                LICENSE_PLATE,
-                ENTRY_TIME,
+                TestConstants.ID,
+                TestConstants.LICENSE_PLATE,
+                TestConstants.ENTRY_TIME,
                 null,
                 null,
                 0.0,
                 0.0,
-                DYNAMIC_PRICE_MULTIPLIER,
+                TestConstants.DYNAMIC_PRICE_MULTIPLIER,
                 spot,
                 mockGarage
         );
@@ -93,12 +81,12 @@ class ParkingEventServiceTest {
 
         assertNotNull(savedEvent);
         assertNotNull(activeParkingEvent.getId());
-        assertEquals(ID, activeParkingEvent.getId());
-        assertEquals(LICENSE_PLATE, activeParkingEvent.getLicensePlate());
-        assertEquals(ENTRY_TIME, activeParkingEvent.getEntryTime());
-        assertEquals(DYNAMIC_PRICE_MULTIPLIER, activeParkingEvent.getDynamicPriceMultiplier());
-        assertEquals(SECTOR, activeParkingEvent.getGarageModel().getSector());
-        assertEquals(ID, activeParkingEvent.getSpotModel().getId());
+        assertEquals(TestConstants.ID, activeParkingEvent.getId());
+        assertEquals(TestConstants.LICENSE_PLATE, activeParkingEvent.getLicensePlate());
+        assertEquals(TestConstants.ENTRY_TIME, activeParkingEvent.getEntryTime());
+        assertEquals(TestConstants.DYNAMIC_PRICE_MULTIPLIER, activeParkingEvent.getDynamicPriceMultiplier());
+        assertEquals(TestConstants.SECTOR, activeParkingEvent.getGarageModel().getSector());
+        assertEquals(TestConstants.ID, activeParkingEvent.getSpotModel().getId());
 
         verify(repository, times(1)).save(activeParkingEvent);
     }
@@ -107,55 +95,55 @@ class ParkingEventServiceTest {
     @Test
     void findParkingEventByLicensePlate_WhenActiveEventExists_ShouldReturnParkingEventModelObject() {
 
-        when(repository.findByLicensePlateAndExitTimeIsNull(LICENSE_PLATE))
+        when(repository.findByLicensePlateAndExitTimeIsNull(TestConstants.LICENSE_PLATE))
                 .thenReturn(Optional.of(activeParkingEvent));
 
 
-        ParkingEventModel foundEvent = parkingEventService.findParkingEventByLicensePlate(LICENSE_PLATE);
+        ParkingEventModel foundEvent = parkingEventService.findParkingEventByLicensePlate(TestConstants.LICENSE_PLATE);
 
 
         assertNotNull(foundEvent);
         assertNull(foundEvent.getExitTime());
-        verify(repository, times(1)).findByLicensePlateAndExitTimeIsNull(LICENSE_PLATE);
+        verify(repository, times(1)).findByLicensePlateAndExitTimeIsNull(TestConstants.LICENSE_PLATE);
     }
 
     @Test
     void findParkingEventByLicensePlate_WhenNoActiveParkingEventExists_ShouldThrowException() {
 
-        when(repository.findByLicensePlateAndExitTimeIsNull(LICENSE_PLATE))
+        when(repository.findByLicensePlateAndExitTimeIsNull(TestConstants.LICENSE_PLATE))
                 .thenReturn(Optional.empty());
 
 
         ParkingEventNotFoundException exception = assertThrows(ParkingEventNotFoundException.class, () -> {
-            parkingEventService.findParkingEventByLicensePlate(LICENSE_PLATE);
+            parkingEventService.findParkingEventByLicensePlate(TestConstants.LICENSE_PLATE);
         });
 
 
         assertNotNull(exception);
-        assertEquals(exception.getMessage(), String.format(NOT_FOUND_MESSAGE, LICENSE_PLATE));
-        verify(repository, times(1)).findByLicensePlateAndExitTimeIsNull(LICENSE_PLATE);
+        assertEquals(exception.getMessage(), String.format(NOT_FOUND_MESSAGE, TestConstants.LICENSE_PLATE));
+        verify(repository, times(1)).findByLicensePlateAndExitTimeIsNull(TestConstants.LICENSE_PLATE);
     }
 
 
     @Test
     void isVehicleCurrentlyParked_WhenActiveEventExists_ShouldReturnTrue() {
 
-        when(repository.findByLicensePlateAndExitTimeIsNull(LICENSE_PLATE))
+        when(repository.findByLicensePlateAndExitTimeIsNull(TestConstants.LICENSE_PLATE))
                 .thenReturn(Optional.of(activeParkingEvent));
 
 
-        assertTrue(parkingEventService.isVehicleCurrentlyParked(LICENSE_PLATE));
-        verify(repository, times(1)).findByLicensePlateAndExitTimeIsNull(LICENSE_PLATE);
+        assertTrue(parkingEventService.isVehicleCurrentlyParked(TestConstants.LICENSE_PLATE));
+        verify(repository, times(1)).findByLicensePlateAndExitTimeIsNull(TestConstants.LICENSE_PLATE);
     }
 
     @Test
     void isVehicleCurrentlyParked_WhenNoActiveEventExists_ShouldReturnFalse() {
 
-        when(repository.findByLicensePlateAndExitTimeIsNull(LICENSE_PLATE))
+        when(repository.findByLicensePlateAndExitTimeIsNull(TestConstants.LICENSE_PLATE))
                 .thenReturn(Optional.empty());
 
 
-        assertFalse(parkingEventService.isVehicleCurrentlyParked(LICENSE_PLATE));
-        verify(repository, times(1)).findByLicensePlateAndExitTimeIsNull(LICENSE_PLATE);
+        assertFalse(parkingEventService.isVehicleCurrentlyParked(TestConstants.LICENSE_PLATE));
+        verify(repository, times(1)).findByLicensePlateAndExitTimeIsNull(TestConstants.LICENSE_PLATE);
     }
 }

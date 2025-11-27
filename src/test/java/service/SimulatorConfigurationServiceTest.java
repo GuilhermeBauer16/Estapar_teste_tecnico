@@ -11,6 +11,7 @@ import com.github.GuilhermeBauer16.EstaparTesteTecnico.repository.ParkingEventRe
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.service.GarageService;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.service.SimulatorConfigurationService;
 import com.github.GuilhermeBauer16.EstaparTesteTecnico.service.SpotService;
+import constants.TestConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -51,11 +51,14 @@ class SimulatorConfigurationServiceTest {
     @InjectMocks
     private SimulatorConfigurationService service;
 
+    private static final Long SECOND_ID = 2L;
+    private static final Long ZERO_ID = 0L;
+
 
     @Test
     void shouldNotCallSimulatorWhenGarageAlreadyExists() {
 
-        when(garageRepository.count()).thenReturn(1L);
+        when(garageRepository.count()).thenReturn(TestConstants.ID);
 
         service.fetchAndPersistGarageConfiguration();
 
@@ -66,7 +69,7 @@ class SimulatorConfigurationServiceTest {
     @Test
     void shouldThrowExceptionWhenSimulatorReturnsNull() {
 
-        when(garageRepository.count()).thenReturn(0L);
+        when(garageRepository.count()).thenReturn(ZERO_ID);
         when(restTemplate.getForObject(anyString(), eq(GarageConfigResponse.class))).thenReturn(null);
 
         assertThrows(InvalidSimulatorException.class,
@@ -78,31 +81,31 @@ class SimulatorConfigurationServiceTest {
     @Test
     void shouldPersistGaragesSpotsAndParkingEvents() {
 
-        when(garageRepository.count()).thenReturn(0L);
+        when(garageRepository.count()).thenReturn(ZERO_ID);
 
 
         RawGarageConfigDTO rawGarage = new RawGarageConfigDTO(
-                "A",
-                10.0,
-                50,
-                0,
-                LocalTime.of(8,0),
-                LocalTime.of(18,0)
+                TestConstants.SECTOR,
+                TestConstants.BASE_PRICE,
+                TestConstants.MAX_CAPACITY,
+                TestConstants.CURRENT_OCCUPANCY,
+                TestConstants.OPEN_HOUR,
+                TestConstants.CLOSE_HOUR
         );
 
         RawSpotConfigDTO spotOccupied = new RawSpotConfigDTO();
-        spotOccupied.setId(1L);
-        spotOccupied.setSector("A");
-        spotOccupied.setLat(-10.0);
-        spotOccupied.setLng(-20.0);
-        spotOccupied.setOccupied(true);
+        spotOccupied.setId(TestConstants.ID);
+        spotOccupied.setSector(TestConstants.SECTOR);
+        spotOccupied.setLat(TestConstants.LAT);
+        spotOccupied.setLng(TestConstants.LNG);
+        spotOccupied.setOccupied(TestConstants.IS_OCCUPIED_TRUE);
 
         RawSpotConfigDTO spotFree = new RawSpotConfigDTO();
-        spotFree.setId(2L);
-        spotFree.setSector("A");
-        spotFree.setLat(-10.5);
-        spotFree.setLng(-20.5);
-        spotFree.setOccupied(false);
+        spotFree.setId(SECOND_ID);
+        spotFree.setSector(TestConstants.SECTOR);
+        spotFree.setLat(TestConstants.LAT);
+        spotFree.setLng(TestConstants.LNG);
+        spotFree.setOccupied(TestConstants.IS_OCCUPIED_FALSE);
 
         GarageConfigResponse response = new GarageConfigResponse();
         response.setGarage(List.of(rawGarage));
@@ -113,7 +116,7 @@ class SimulatorConfigurationServiceTest {
 
 
         GarageModel savedGarage = new GarageModel(
-                "A",
+                TestConstants.SECTOR,
                 rawGarage.getBasePrice(),
                 rawGarage.getMaxCapacity(),
                 rawGarage.getCurrentOccupancy(),
@@ -126,10 +129,10 @@ class SimulatorConfigurationServiceTest {
 
 
         SpotModel savedOccupiedSpot = new SpotModel(
-                1L, -10.0, -20.0, savedGarage, true, "INIT_PLACA_SIM_1"
+                TestConstants.ID, TestConstants.LAT, TestConstants.LNG, savedGarage, TestConstants.IS_OCCUPIED_TRUE, TestConstants.LICENSE_PLATE
         );
         SpotModel savedFreeSpot = new SpotModel(
-                2L, -10.5, -20.5, savedGarage, false, null
+                SECOND_ID, TestConstants.LAT, TestConstants.LNG, savedGarage, TestConstants.IS_OCCUPIED_FALSE, null
         );
 
         when(spotService.saveSpot(any())).thenReturn(savedOccupiedSpot, savedFreeSpot);
@@ -157,7 +160,7 @@ class SimulatorConfigurationServiceTest {
     @Test
     void shouldThrowInvalidSimulatorExceptionWhenRestTemplateFails() {
 
-        when(garageRepository.count()).thenReturn(0L);
+        when(garageRepository.count()).thenReturn(ZERO_ID);
         when(restTemplate.getForObject(anyString(), eq(GarageConfigResponse.class)))
                 .thenThrow(new RuntimeException("Simulated error"));
 
