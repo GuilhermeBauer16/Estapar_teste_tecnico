@@ -71,9 +71,6 @@ public class GarageModel {
         return currentOccupancy;
     }
 
-    public void setCurrentOccupancy(int currentOccupancy) {
-        this.currentOccupancy = currentOccupancy;
-    }
 
     public void setCurrentOccupancy(Integer currentOccupancy) {
         this.currentOccupancy = currentOccupancy;
