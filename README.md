@@ -57,9 +57,9 @@ CONTAINER_PORT=8080
 
 ## Revenue Controller
 
-### Exemplo
+* O campo currency é opcional, pois possui um valor padrão.
 
-* O campo currency é opcional, pois possue um valor deffaut.
+### Exemplo
 
  ```revenue
     http://localhost:3003/revenue?date=2025-11-27&sector=B
