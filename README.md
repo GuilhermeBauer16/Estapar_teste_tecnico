@@ -39,7 +39,7 @@ CONTAINER_PORT=8080
 #### PARKED
  ```PARKED
 {
-  "license_plate": "INIT_PLACA_SIM_121",
+  "license_plate": "INIT_PLACA_SIM_12",
   "lat": -23.561684,
   "lng": -46.655981,
   "event_type": "PARKED"
